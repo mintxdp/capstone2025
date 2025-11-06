@@ -32,20 +32,9 @@ perform_update() {
 }
 
 # ----------------------------------------
-# Optional: Kernel Cleanup
-# ----------------------------------------
-clean_old_kernels() {
-  if dpkg -l | grep -q linux-image; then
-    log_info "Cleaning old kernels..."
-    sudo apt-get autoremove --purge -y
-  fi
-}
-
-# ----------------------------------------
 # Run Script
 # ----------------------------------------
 confirm "This will update and clean your system. Proceed?"
 perform_update
-clean_old_kernels
 log_info "✅ Update completed successfully."
 
