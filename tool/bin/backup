@@ -1,0 +1,83 @@
+#!/bin/bash
+# --- Source dependencies ---
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+ROOT_DIR="$(dirname "$SCRIPT_DIR")"
+. "$ROOT_DIR/lib/logger.sh"
+
+# --- Configuration ---
+BACKUP_DIR="/backup"
+SRC_DIRS="/home /etc"
+SNAPSHOT_FILE="$BACKUP_DIR/snapshot.snar"
+
+# --- Ensure backup directory exists ---
+if [ ! -d "$BACKUP_DIR" ]; then
+    log_info "Creating backup directory at $BACKUP_DIR..."
+    mkdir -p "$BACKUP_DIR" 2>/dev/null || sudo mkdir -p "$BACKUP_DIR"
+fi
+
+# --- Check write access ---
+if [ ! -w "$BACKUP_DIR" ]; then
+    log_error "No write permission to $BACKUP_DIR. Try running with sudo."
+    exit 1
+fi
+
+# --- Usage information ---
+usage() {
+    echo "Usage: backup [--incremental|-i | --disk|-d <device>]"
+    echo "Examples:"
+    echo "  backup                 # Full system backup"
+    echo "  backup -i              # Incremental backup"
+    echo "  backup -d /dev/sda     # Disk backup"
+    exit 1
+}
+
+# --- Backup functions ---
+full_backup() {
+    local FILE="$BACKUP_DIR/full-backup-$(date +%F-%H%M).tar.gz"
+    log_info "Starting full system backup..."
+    if tar -czf "$FILE" $SRC_DIRS 2>>"$ERROR_LOG"; then
+        log_info "Full backup completed successfully → $FILE"
+    else
+        log_error "Full backup FAILED!"
+    fi
+}
+
+incremental_backup() {
+    local FILE="$BACKUP_DIR/incremental-$(date +%F-%H%M).tar.gz"
+    log_info "Starting incremental backup..."
+    if tar --listed-incremental="$SNAPSHOT_FILE" -czf "$FILE" $SRC_DIRS 2>>"$ERROR_LOG"; then
+        log_info "Incremental backup completed successfully → $FILE"
+    else
+        log_error "Incremental backup FAILED!"
+    fi
+}
+
+disk_backup() {
+    local DEVICE="$1"
+    [ -z "$DEVICE" ] && usage
+    local FILE="$BACKUP_DIR/disk-backup-$(basename $DEVICE)-$(date +%F-%H%M).img"
+    log_info "Starting disk backup of $DEVICE..."
+    if sudo dd if="$DEVICE" of="$FILE" bs=1M status=progress conv=sync,noerror 2>>"$ERROR_LOG"; then
+        log_info "Disk backup completed successfully → $FILE"
+    else
+        log_error "Disk backup FAILED!"
+    fi
+}
+
+# --- Main Logic ---
+case "$1" in
+    -i|--incremental)
+        incremental_backup
+        ;;
+    -d|--disk)
+        shift
+        disk_backup "$1"
+        ;;
+    "" )
+        full_backup
+        ;;
+    -h|--help)
+        usage
+        ;;
+esac
+

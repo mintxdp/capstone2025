@@ -1,0 +1,87 @@
+#!/bin/bash
+
+# --- Resolve paths ---
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+ROOT_DIR="$(dirname "$SCRIPT_DIR")"
+
+# --- Source logger ---
+. "$ROOT_DIR/lib/logger.sh"
+
+# --- Help message ---
+show_help() {
+    cat <<EOF
+Usage: tool [command] [options]
+
+Commands:
+  update              Perform system update
+  backup              Perform system backup (full by default)
+  backup -i|--incremental   Perform incremental backup
+  backup -d|--disk <device> Perform disk backup
+  backup -h|--help    Show backup help
+  -h, --help          Show this help message
+
+Examples:
+  tool update
+  tool backup
+  tool backup -i
+  tool backup --help
+EOF
+}
+
+# --- Menu function ---
+show_menu() {
+    echo "=============================="
+    echo "       SYSTEM TOOL MENU       "
+    echo "=============================="
+    echo "1) Update system"
+    echo "2) Backup system"
+    echo "3) Exit"
+    echo -n "Choose an option [1-3]: "
+    read -r choice
+
+    case "$choice" in
+        1)
+            log_info "User chose system update"
+            "$SCRIPT_DIR/update"
+            ;;
+        2)
+            log_info "User chose system backup"
+            "$SCRIPT_DIR/backup"
+            ;;
+        3)
+            log_info "User exited tool"
+            echo "Goodbye!"
+            exit 0
+            ;;
+        *)
+            log_error "Invalid option selected"
+            echo "Invalid choice."
+            ;;
+    esac
+}
+
+# --- Main command handling ---
+case "$1" in
+    "" )
+        # No arguments → show menu
+        show_menu
+        ;;
+    -h|--help)
+        show_help
+        ;;
+    update)
+        shift
+        "$SCRIPT_DIR/update" "$@"
+        ;;
+    backup)
+        shift
+        "$SCRIPT_DIR/backup" "$@"
+        ;;
+    *)
+        log_error "Unknown command: $1"
+        echo "Unknown command: $1"
+        echo "Use 'tool --help' for available commands."
+        exit 1
+        ;;
+esac
+

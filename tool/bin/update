@@ -3,6 +3,7 @@
 # System Update and Cleanup Tool
 # Part of your command suite
 # ========================================
+# Determine the base directory for libraries
 
 set -euo pipefail
 
