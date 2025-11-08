@@ -4,7 +4,7 @@
 ├── README.md<br>
 ├── install.sh<br>
 ├── bin/ <br>
-│   ├── tool        # Main entry point (menu + commands)<br>
+│&nbsp;&nbsp;&nbsp;├── tool        # Main entry point (menu + commands)<br>
 │   ├── backup      # Backup command (supports full, incremental, disk) <br>
 │   └── update      # System update command <br>
 └── lib/ <br>
