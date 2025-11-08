@@ -1,5 +1,5 @@
 ## Project Structure
-.<br>
+tool<br>
 ├── Makefile<br>
 ├── README.md<br>
 ├── install.sh<br>
