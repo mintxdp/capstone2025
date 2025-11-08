@@ -1,20 +1,25 @@
-# msys
-"mysys" is suite of Bash scripts to automate system maintenance tasks such as backup, system updates, and log monitoring. 
+## Project Structure
+.
+├── Makefile
+├── README.md
+├── install.sh
+├── bin/
+│   ├── tool        # Main entry point (menu + commands)
+│   ├── backup      # Backup command (supports full, incremental, disk)
+│   └── update      # System update command
+└── lib/
+    ├── loader.sh   # Sets up paths and loads libraries
+    ├── logger.sh   # Logging functions
+    └── utils.sh    # Utility helper functions
 
-### Functionalities:
----
-- used for backup
-- used for system updates
-- log monitoring
+## Installation
 
-### Project Structure:
----
-tool
-  bin
-    backup
-    update
-    tool
-    log
-  lib
-    logger.sh
-    
+- Clone GitHub Repository - 
+- cd capstone2025/tool (capstone2025 is default name)
+- chmod +x install.sh
+- ./install.sh
+
+## Usage
+
+
+
