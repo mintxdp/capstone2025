@@ -1,15 +1,36 @@
 #!/bin/bash
+# === TOOL MAIN SCRIPT ===
 
 # --- Resolve paths ---
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-ROOT_DIR="$(dirname "$SCRIPT_DIR")"
+BIN_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+LIB_DIR="$BIN_DIR/../lib"
 
-# --- Source logger ---
-. "$ROOT_DIR/lib/logger.sh"
+# If installed globally, adjust library path
+if [ -d "/usr/local/lib/tool" ]; then
+    LIB_DIR="/usr/local/lib/tool"
+fi
 
-# --- Help message ---
+# --- Source dependencies ---
+if [ -f "$LIB_DIR/loader.sh" ]; then
+    source "$LIB_DIR/loader.sh"
+elif [ -f "$LIB_DIR/logger.sh" ]; then
+    source "$LIB_DIR/logger.sh"
+    [ -f "$LIB_DIR/utils.sh" ] && source "$LIB_DIR/utils.sh"
+else
+    echo "Error: Could not load tool libraries from $LIB_DIR"
+    exit 1
+fi
+
+UPDATE_CMD="$BIN_DIR/update"
+BACKUP_CMD="$BIN_DIR/backup"
+
+# If installed globally, override paths
+[ -x "/usr/local/bin/update" ] && UPDATE_CMD="/usr/local/bin/update"
+[ -x "/usr/local/bin/backup" ] && BACKUP_CMD="/usr/local/bin/backup"
+
+# --- Help ---
 show_help() {
-    cat <<EOF
+cat <<EOF
 Usage: tool [command] [options]
 
 Commands:
@@ -28,7 +49,7 @@ Examples:
 EOF
 }
 
-# --- Menu function ---
+# --- Menu ---
 show_menu() {
     echo "=============================="
     echo "       SYSTEM TOOL MENU       "
@@ -36,52 +57,22 @@ show_menu() {
     echo "1) Update system"
     echo "2) Backup system"
     echo "3) Exit"
-    echo -n "Choose an option [1-3]: "
-    read -r choice
+    read -rp "Choose an option [1-3]: " choice
 
     case "$choice" in
-        1)
-            log_info "User chose system update"
-            "$SCRIPT_DIR/update"
-            ;;
-        2)
-            log_info "User chose system backup"
-            "$SCRIPT_DIR/backup"
-            ;;
-        3)
-            log_info "User exited tool"
-            echo "Goodbye!"
-            exit 0
-            ;;
-        *)
-            log_error "Invalid option selected"
-            echo "Invalid choice."
-            ;;
+        1) log_info "User chose system update"; "$UPDATE_CMD" ;;
+        2) log_info "User chose system backup"; "$BACKUP_CMD" ;;
+        3) log_info "User exited tool"; echo "Goodbye!"; exit 0 ;;
+        *) log_error "Invalid option selected"; echo "Invalid choice." ;;
     esac
 }
 
-# --- Main command handling ---
+# --- Main ---
 case "$1" in
-    "" )
-        # No arguments → show menu
-        show_menu
-        ;;
-    -h|--help)
-        show_help
-        ;;
-    update)
-        shift
-        "$SCRIPT_DIR/update" "$@"
-        ;;
-    backup)
-        shift
-        "$SCRIPT_DIR/backup" "$@"
-        ;;
-    *)
-        log_error "Unknown command: $1"
-        echo "Unknown command: $1"
-        echo "Use 'tool --help' for available commands."
-        exit 1
-        ;;
+    "" ) show_menu ;;
+    -h|--help) show_help ;;
+    update) shift; "$UPDATE_CMD" "$@" ;;
+    backup) shift; "$BACKUP_CMD" "$@" ;;
+    *) log_error "Unknown command: $1"; echo "Unknown command: $1"; exit 1 ;;
 esac
 

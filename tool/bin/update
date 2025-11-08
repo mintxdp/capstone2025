@@ -7,10 +7,14 @@
 
 set -euo pipefail
 
-# Load library helpers
-LIB_DIR="$(dirname "$0")/../lib"
-source "$LIB_DIR/utils.sh"
-source "$LIB_DIR/logger.sh"
+# Load shared library resolver
+if [ -f "/usr/local/lib/tool/loader.sh" ]; then
+    source "/usr/local/lib/tool/loader.sh"
+else
+    SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+    source "$SCRIPT_DIR/../lib/loader.sh"
+fi
+
 
 # ----------------------------------------
 # Main Update Function

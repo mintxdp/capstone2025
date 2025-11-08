@@ -1,8 +1,12 @@
 #!/bin/bash
 # --- Source dependencies ---
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-ROOT_DIR="$(dirname "$SCRIPT_DIR")"
-. "$ROOT_DIR/lib/logger.sh"
+# Load shared library resolver
+if [ -f "/usr/local/lib/tool/loader.sh" ]; then
+    source "/usr/local/lib/tool/loader.sh"
+else
+    SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+    source "$SCRIPT_DIR/../lib/loader.sh"
+fi
 
 # --- Configuration ---
 BACKUP_DIR="/backup"
