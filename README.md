@@ -7,10 +7,10 @@
 │   ├── tool        # Main entry point (menu + commands)<br>
 │   ├── backup      # Backup command (supports full, incremental, disk) <br>
 │   └── update      # System update command <br>
-└── lib/
-    ├── loader.sh   # Sets up paths and loads libraries
-    ├── logger.sh   # Logging functions
-    └── utils.sh    # Utility helper functions
+└── lib/ <br>
+    ├── loader.sh   # Sets up paths and loads libraries <br>
+    ├── logger.sh   # Logging functions <br>
+    └── utils.sh    # Utility helper functions <br>
 
 ## Installation
 
