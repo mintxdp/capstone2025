@@ -3,10 +3,10 @@
 ├── Makefile<br>
 ├── README.md<br>
 ├── install.sh<br>
-├── bin/
-│   ├── tool        # Main entry point (menu + commands)
-│   ├── backup      # Backup command (supports full, incremental, disk)
-│   └── update      # System update command
+├── bin/ <br>
+│   ├── tool        # Main entry point (menu + commands)<br>
+│   ├── backup      # Backup command (supports full, incremental, disk) <br>
+│   └── update      # System update command <br>
 └── lib/
     ├── loader.sh   # Sets up paths and loads libraries
     ├── logger.sh   # Logging functions
