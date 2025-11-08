@@ -1,8 +1,8 @@
 ## Project Structure
-.
+.<br>
 ├── Makefile<br>
-├── README.md
-├── install.sh
+├── README.md<br>
+├── install.sh<br>
 ├── bin/
 │   ├── tool        # Main entry point (menu + commands)
 │   ├── backup      # Backup command (supports full, incremental, disk)
